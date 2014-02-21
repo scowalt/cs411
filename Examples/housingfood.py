@@ -1,8 +1,8 @@
 import urllib, urllib2, cookielib
 try :
-    import json
+    import json # Python >=2.6.x
 except ImportError :
-    import simplejson as json
+    import simplejson as json # Python < 2.6
 
 #Create CookieJar to hold session cookies
 cj = cookielib.CookieJar()
