@@ -1,3 +1,4 @@
+from HTMLParser import HTMLParser
 import urllib, urllib2, cookielib
 try :
     import json # Python >=2.6.x
@@ -13,12 +14,11 @@ class FoodInfoGrabber:
 		#Get initial ASP session cookies. Cookies will be store in cj
 		r = self.opener.open("http://eatsmart.housing.illinois.edu/NetNutrition/46")
 
-	def getMenu(self, facilityCode, menuCode):
-		facilityCode = 2 #Busey-Evans
-		menuCode = 504603 #dinner at Busey-Evans dinner on February 20th
+	def getMenu(self, menuCode):
+		menuCode = 513635 #dinner at FAR on March 9th
 
 		# (for some reason) this call needs to be made first
-		values = {'unitOid': facilityCode}
+		values = {'unitOid': 2} # this code doesn't matter
 		data = urllib.urlencode(values)
 		req = urllib2.Request("http://eatsmart.housing.illinois.edu/NetNutrition/Unit.aspx/SelectUnitFromChildUnitsList", data, {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"})
 		r = self.opener.open(req)
@@ -31,7 +31,10 @@ class FoodInfoGrabber:
 		#Response is in JSON
 		foods = json.loads(r.read())
 
-		return foods
+		html = foods['panels'][0]['html']
+
+		parser = MenuHTMLParser()
+		parser.feed(html)
 
 	def getNutritionalInformation(self, foodCode):
 		foodCode = 43162606 # Fruit Tray
@@ -45,6 +48,14 @@ class FoodInfoGrabber:
 
 		return r.read()
 
+class MenuHTMLParser(HTMLParser):
+	def handle_starttag(self, tag, attrs):
+		print "Encountered a start tag:", tag
+	def handle_endtag(self, tag):
+		print "Encountered an end tag :", tag
+	def handle_data(self, data):
+		print "Encountered some data  :", data
+
 if __name__ == "__main__":
 	fig = FoodInfoGrabber();
-	print fig.getNutritionalInformation(2)
+	print fig.getMenu(504603)
