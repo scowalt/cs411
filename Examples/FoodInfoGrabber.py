@@ -15,8 +15,6 @@ class FoodInfoGrabber:
 		r = self.opener.open("http://eatsmart.housing.illinois.edu/NetNutrition/46")
 
 	def getMenu(self, menuCode):
-		menuCode = 513635 #dinner at FAR on March 9th
-
 		# (for some reason) this call needs to be made first
 		values = {'unitOid': 2} # this code doesn't matter
 		data = urllib.urlencode(values)
@@ -36,8 +34,8 @@ class FoodInfoGrabber:
 		parser = MenuHTMLParser()
 		parser.feed(html)
 
-	def getNutritionalInformation(self, foodCode):
-		foodCode = 43162606 # Fruit Tray
+	def getNutritionalInformation(self, menuCode, foodCode):
+		self.getMenu(menuCode)
 
 		values = {'detailOid': foodCode}
 		url = "http://eatsmart.housing.illinois.edu/NetNutrition/Home.aspx/NutritionDetail.aspx/ShowItemNutritionLabel"
@@ -57,5 +55,9 @@ class MenuHTMLParser(HTMLParser):
 		print "Encountered some data  :", data
 
 if __name__ == "__main__":
-	fig = FoodInfoGrabber();
-	print fig.getMenu(504603)
+	menuCode = 513635 #dinner at FAR on March 9th
+	foodCode = 43305418 # Tiramisu
+
+	fig = FoodInfoGrabber()
+	# print fig.getMenu(menuCode)
+	print fig.getNutritionalInformation(menuCode,foodCode)
