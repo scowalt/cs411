@@ -34,7 +34,7 @@ r = opener.open(req)
 foods = json.loads(r.read())
 #JSON is structured with a list of the panels on the webpage, each in HTML
 #We're going to have to parse this into something usable.
-print foods["panels"][0]["html"]
+# print foods["panels"][0]["html"]
 
 #Fetching nutritional information
 #detailOid corresponds to a food item/dish; 42672740 is Roasted Turkey Breast
