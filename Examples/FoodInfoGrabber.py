@@ -1,4 +1,4 @@
-from HTMLParser import HTMLParser
+from bs4 import BeautifulSoup #HTML parsing
 import urllib, urllib2, cookielib
 try :
     import json # Python >=2.6.x
@@ -31,8 +31,11 @@ class FoodInfoGrabber:
 
 		html = foods['panels'][0]['html']
 
-		parser = self.MenuHTMLParser()
-		parser.feed(html)
+		parsed_html = BeautifulSoup(html)
+		return parsed_html.find_all(self.__food_item_row)
+
+	def __food_item_row(self, tag):
+		return tag.name == 'tr' and tag.has_attr('class') and 'cbo_nn_item' in str(tag['class'])
 
 	def getNutritionalInformation(self, menuCode, foodCode):
 		self.getMenu(menuCode)
@@ -46,18 +49,10 @@ class FoodInfoGrabber:
 
 		return r.read()
 
-	class MenuHTMLParser(HTMLParser):
-		def handle_starttag(self, tag, attrs):
-			print "Encountered a start tag:", tag
-		def handle_endtag(self, tag):
-			print "Encountered an end tag :", tag
-		def handle_data(self, data):
-			print "Encountered some data  :", data
-
 if __name__ == "__main__":
 	menuCode = 513635 #dinner at FAR on March 9th
 	foodCode = 43305418 # Tiramisu
 
 	fig = FoodInfoGrabber()
-	# print fig.getMenu(menuCode)
-	print fig.getNutritionalInformation(menuCode,foodCode)
+	print fig.getMenu(menuCode)
+	#print fig.getNutritionalInformation(menuCode,foodCode)
