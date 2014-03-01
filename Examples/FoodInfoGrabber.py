@@ -32,7 +32,13 @@ class FoodInfoGrabber:
 		html = foods['panels'][0]['html']
 
 		parsed_html = BeautifulSoup(html)
-		return parsed_html.find_all(self.__food_item_row)
+		food_items = parsed_html.find_all(self.__food_item_row)
+		food_dict = {}
+		for item in food_items:
+			food_name = item.find_all('td')[1].text
+			print item.find_all('td')[1]['onmouseover']
+			food_dict[food_name] = {}
+		return food_dict
 
 	def __food_item_row(self, tag):
 		return tag.name == 'tr' and tag.has_attr('class') and 'cbo_nn_item' in str(tag['class'])
