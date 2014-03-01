@@ -34,11 +34,13 @@ class FoodInfoGrabber:
 		return foods
 
 	def getNutritionalInformation(self, foodCode):
-		foodCode = 42672740 # Roasted Turkey Breast
+		foodCode = 43162606 # Fruit Tray
 
 		values = {'detailOid': foodCode}
+		url = "http://eatsmart.housing.illinois.edu/NetNutrition/Home.aspx/NutritionDetail.aspx/ShowItemNutritionLabel"
 		data = urllib.urlencode(values)
-		req = urllib2.Request("http://eatsmart.housing.illinois.edu/NetNutrition/Home.aspx/NutritionDetail.aspx/ShowItemNutritionLabel", data, {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"})
+		headers = {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"}
+		req = urllib2.Request(url, data, headers)
 		r = self.opener.open(req)
 
 		return r.read()
