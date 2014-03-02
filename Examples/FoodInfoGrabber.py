@@ -37,11 +37,19 @@ class FoodInfoGrabber:
 		for item in food_items:
 			food_name = str(item.find_all('td')[1].text)
 			food_id = int(str(item.find_all('td')[1]['onmouseover'])[47:55])
-			food_dict[food_id] = {'name': food_name, 'menuID': menuCode}
+			food_category = self.__get_item_category(item)
+			food_dict[food_id] = {'name': food_name, 'menuID': menuCode, 'category': food_category}
 		return food_dict
 
 	def __food_item_row(self, tag):
 		return tag.name == 'tr' and tag.has_attr('class') and 'cbo_nn_item' in str(tag['class'])
+	def __food_category_row(self, tag):
+		return tag.name == 'td' and tag.has_attr('class') and 'cbo_nn_itemGroupRow' in str(tag['class'])
+	def __get_item_category(self, item):
+		tag = item.previous_sibling
+		while (not self.__food_category_row(tag.td)):
+			tag = tag.previous_sibling
+		return str(tag.td.text.strip())
 
 	def getNutritionalInformation(self, menuCode, foodCode):
 		self.getMenu(menuCode)
