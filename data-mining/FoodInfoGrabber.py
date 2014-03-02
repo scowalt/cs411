@@ -61,12 +61,14 @@ class FoodInfoGrabber:
 		req = urllib2.Request(url, data, headers)
 		r = self.opener.open(req)
 
-		return r.read()
+		html = r.read()
+		parsed_html = BeautifulSoup(html)
+		return parsed_html
 
 if __name__ == "__main__":
 	menuCode = 513635 #dinner at FAR on March 9th
 	foodCode = 43305418 # Tiramisu
 
 	fig = FoodInfoGrabber()
-	print fig.getMenu(menuCode)
-	#print fig.getNutritionalInformation(menuCode,foodCode)
+	#print fig.getMenu(menuCode)
+	print fig.getNutritionalInformation(menuCode,foodCode)
