@@ -37,7 +37,7 @@ class FoodInfoGrabber:
 		for item in food_items:
 			food_name = str(item.find_all('td')[1].text)
 			food_id = int(str(item.find_all('td')[1]['onmouseover'])[47:55])
-			food_dict[food_id] = {'name': food_name}
+			food_dict[food_id] = {'name': food_name, 'menuID': menuCode}
 		return food_dict
 
 	def __food_item_row(self, tag):
