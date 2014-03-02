@@ -35,9 +35,9 @@ class FoodInfoGrabber:
 		food_items = parsed_html.find_all(self.__food_item_row)
 		food_dict = {}
 		for item in food_items:
-			food_name = item.find_all('td')[1].text
-			print item.find_all('td')[1]['onmouseover']
-			food_dict[food_name] = {}
+			food_name = str(item.find_all('td')[1].text)
+			food_id = int(str(item.find_all('td')[1]['onmouseover'])[47:55])
+			food_dict[food_id] = {'name': food_name}
 		return food_dict
 
 	def __food_item_row(self, tag):
