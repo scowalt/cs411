@@ -1,4 +1,7 @@
+#line 2 MUST stay in order to be able to read utf-8 webpages
+#coding: utf-8
 from bs4 import BeautifulSoup #HTML parsing
+import re #regex
 import urllib, urllib2, cookielib
 try :
     import json # Python >=2.6.x
@@ -32,14 +35,23 @@ class FoodInfoGrabber:
 		html = foods['panels'][0]['html']
 
 		parsed_html = BeautifulSoup(html)
+		header = parsed_html.find_all(self.__header)[0].text.encode('utf8')
+		parsed_header = self.__parse_header(header)
+		(facility_name, date_string, meal, menu_name) = parsed_header
 		food_items = parsed_html.find_all(self.__food_item_row)
-		food_dict = {}
+		menu = {'date_string': date_string,
+		        'facility': facility_name,
+		        'meal': meal,
+		        'menu_name': menu_name,
+		        'id': menuCode,
+		        'food': {}}
+
 		for item in food_items:
 			food_name = str(item.find_all('td')[1].text)
 			food_id = int(str(item.find_all('td')[1]['onmouseover'])[47:55])
 			food_category = self.__get_item_category(item)
-			food_dict[food_id] = {'name': food_name, 'menuID': menuCode, 'category': food_category}
-		return food_dict
+			menu['food'][food_id] = {'name': food_name, 'category': food_category}
+		return menu
 
 	def __food_item_row(self, tag):
 		return tag.name == 'tr' and tag.has_attr('class') and 'cbo_nn_item' in str(tag['class'])
@@ -50,6 +62,12 @@ class FoodInfoGrabber:
 		while (not self.__food_category_row(tag.td)):
 			tag = tag.previous_sibling
 		return str(tag.td.text.strip())
+	def __header(self, tag):
+		return tag.name == 'div' and tag.has_attr('class') and 'cbo_nn_itemHeaderDiv' in str(tag['class'])
+	def __parse_header(self, header):
+		regex = re.compile(r'Menu\sFor  -  ([a-zA-Z\s]*) -  ([a-zA-Z0-9\s\,]*) -  ([a-zA-Z\s]*) -  ([a-zA-Z\s]*)', re.UNICODE)
+		matches = regex.match(header)
+		return matches.groups()
 
 	def getNutritionalInformation(self, menuCode, foodCode):
 		self.getMenu(menuCode)
@@ -67,8 +85,9 @@ class FoodInfoGrabber:
 
 if __name__ == "__main__":
 	menuCode = 513635 #dinner at FAR on March 9th
+	menuCode = 514650 #dinner at Busey on March 21st
 	foodCode = 43305418 # Tiramisu
 
 	fig = FoodInfoGrabber()
-	#print fig.getMenu(menuCode)
-	print fig.getNutritionalInformation(menuCode,foodCode)
+	print fig.getMenu(menuCode)
+	#print fig.getNutritionalInformation(menuCode,foodCode)
