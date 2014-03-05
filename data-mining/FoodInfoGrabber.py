@@ -81,6 +81,7 @@ class FoodInfoGrabber:
 
 		html = r.read()
 		parsed_html = BeautifulSoup(html)
+		vitamins = parsed_html.find_all(self.__vitamin)
 		nutrients = parsed_html.find_all(self.__nutrient)
 		nutrient_info = {}
 		for nutrient in nutrients:
@@ -88,10 +89,22 @@ class FoodInfoGrabber:
 			key = info[0].text.encode('utf8').replace(':', '')
 			value = info[len(info)-1].text.encode('utf8').strip().replace('\xc2\xa0', '')
 			nutrient_info[key] = value
+		for vitamin in vitamins:
+			info = vitamin.text.encode('utf8').split(':\xc2\xa0')
+			key = info[0].replace(':', '')
+			value = None
+			if (len(info) >= 2):
+				value = info[1]
+			else:
+				value = '0%'
+			nutrient_info[key] = value
 		return nutrient_info
 
 	def __nutrient(self, tag):
 		return tag.name == 'td' and tag.has_attr('class') and 'cbo_nn_LabelDetail' in str(tag['class'])
+
+	def __vitamin(self, tag):
+		return tag.name == 'td' and tag.has_attr('class') and 'cbo_nn_SecondaryNutrientLabel' in str(tag['class'])
 
 if __name__ == "__main__":
 	menuCode = 513635 #dinner at FAR on March 9th
