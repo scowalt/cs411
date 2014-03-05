@@ -81,7 +81,17 @@ class FoodInfoGrabber:
 
 		html = r.read()
 		parsed_html = BeautifulSoup(html)
-		return parsed_html
+		nutrients = parsed_html.find_all(self.__nutrient)
+		nutrient_info = {}
+		for nutrient in nutrients:
+			info = nutrient.contents
+			key = info[0].text.encode('utf8').replace(':', '')
+			value = info[len(info)-1].text.encode('utf8').strip().replace('\xc2\xa0', '')
+			nutrient_info[key] = value
+		return nutrient_info
+
+	def __nutrient(self, tag):
+		return tag.name == 'td' and tag.has_attr('class') and 'cbo_nn_LabelDetail' in str(tag['class'])
 
 if __name__ == "__main__":
 	menuCode = 513635 #dinner at FAR on March 9th
@@ -89,5 +99,7 @@ if __name__ == "__main__":
 	foodCode = 43305418 # Tiramisu
 
 	fig = FoodInfoGrabber()
-	print fig.getMenu(menuCode)
-	#print fig.getNutritionalInformation(menuCode,foodCode)
+	menu = fig.getMenu(menuCode)
+	for foodID, foodInfo in menu['food'].items():
+		menu['food'][foodID]['nutrition'] = fig.getNutritionalInformation(menuCode,foodID)
+	print menu
