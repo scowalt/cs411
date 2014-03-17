@@ -2,23 +2,33 @@
 ##					SELECTS                   ##
 ################################################
 
-# Selects ratings of users
+# CHECKED
+# Selects ratings of users 
 SELECT * FROM users NATURAL JOIN ratings WHERE user_net_id = INPUT(user_net_id);
 
+# CHECKED
 # Selects ratings of food items
-SELECT * FROM food_items, ratings WHERE INPUT(food_items.food_name) = ratings.food_name;
+SELECT * FROM food_items NATURAL JOIN ratings WHERE INPUT(food_items.food_name) = ratings.food_name;
 
+# CHECKED
 # Selects food in specified category
-SELECT * FROM food_items, categories WHERE INPUT(food_items.category_name) = food_items.category_name;
+SELECT * FROM food_items NATURAL JOIN categories WHERE INPUT(category_name) = category_name;
 
+# CHECKED
 # Select nutritional information of food
-SELECT * FROM food_items, nutritional_information WHERE INPUT(food_items.food_name) = nutritional_information.food_name;
+SELECT * FROM food_items NATURAL JOIN nutritional_information WHERE INPUT(food_name) = food_name;
 
+# CHECKED
 # Select menus with specified food_item
 SELECT * FROM food_items NATURAL JOIN menus_have_food_items NATURAL JOIN menus WHERE INPUT(food_name) = food_name;
 
+# CHECKED
 # Select menus of specified facility
 SELECT * FROM facilities NATURAL JOIN menus WHERE INPUT(facility_id) = facility_id;
+
+# CHECKED
+# Find average rating of a given food
+SELECT food_name, AVG(rating) FROM ratings WHERE food_name = INPUT(food_name);
 
 
 ################################################
@@ -49,6 +59,7 @@ INSERT INTO menus_have_food_items (menus_id, food_name) VALUES (INPUT(menus_id),
 # Insert facility into database
 INSERT INTO facilities (facility_id, name) VALUES (INPUT(facility_id), INPUT(name));
 
+
 ################################################
 ##					DELETES                   ##
 ################################################
@@ -67,3 +78,32 @@ DELETE FROM ratings WHERE user_net_id = INPUT(user_net_id);
 
 # Delete food item from database
 DELETE FROM food_items WHERE food_name=INPUT(food_name);
+
+# Delete nutritional_information from database
+DELETE FROM nutritional_information WHERE food_name=INPUT(food_name);
+
+# Delete category from database
+DELETE FROM categories WHERE category_name = INPUT(category_name);
+
+# Delete menu from database
+DELETE FROM menus WHERE menus_id = INPUT(menus_id);
+
+# Delete food item from menu
+DELETE FROM menus_have_food_items WHERE menus_id=INPUT(menus_id) AND food_name = INPUT(food_name);
+
+# Delete facility from database
+DELETE FROM facilities WHERE facility_id = INPUT(facility_id);
+
+
+################################################
+##					UPDATES                   ##
+################################################
+
+# Update netid of user
+UPDATE users SET user_net_id = INPUT(new_user_net_id) WHERE user_net_id = INPUT(user_net_id);
+
+# Update user rating of specific food
+UPDATE ratings SET rating = INPUT(rating) WHERE user_net_id = INPUT(user_net_id) AND food_name = INPUT(food_name);
+
+# Update name of food
+UPDATE food_items SET food_items = INPUT(new_food_name) WHERE food_name = INPUT(food_name);
