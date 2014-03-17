@@ -1,5 +1,5 @@
 ################################################
-##					SELECTS                   ##
+##                  SELECTS                   ##
 ################################################
 
 # CHECKED
@@ -32,7 +32,7 @@ SELECT food_name, AVG(rating) FROM ratings WHERE food_name = INPUT(food_name);
 
 
 ################################################
-##					INSERTS                   ##
+##                  INSERTS                   ##
 ################################################
 
 # Insert user into database
@@ -61,7 +61,7 @@ INSERT INTO facilities (facility_id, name) VALUES (INPUT(facility_id), INPUT(nam
 
 
 ################################################
-##					DELETES                   ##
+##                  DELETES                   ##
 ################################################
 
 # Delete user from database
@@ -96,7 +96,7 @@ DELETE FROM facilities WHERE facility_id = INPUT(facility_id);
 
 
 ################################################
-##					UPDATES                   ##
+##                  UPDATES                   ##
 ################################################
 
 # Update netid of user
