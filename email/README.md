@@ -1,0 +1,1 @@
+The files in this folder deal with sending users notification emails when their favorite foods will be served. These files should be stored on a non-web-accessible location on the server.
