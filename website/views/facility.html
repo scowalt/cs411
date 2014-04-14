@@ -1,0 +1,9 @@
+<html>
+<body>
+
+{% for row in menus %}
+<a href='/menu.php?menu_id={{row[0]}}'>{{row[1]}}  --  {{row[3]}}</a><br>
+{% endfor %}
+
+</body>
+</html>

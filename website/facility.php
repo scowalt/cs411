@@ -1,26 +1,28 @@
-<html>
-<body>
-
 <?php
+
+// setup Twig
+require_once './vendor/autoload.php';
+$loader = new Twig_Loader_Filesystem('./views');
+$twig = new Twig_Environment($loader);
 
 $facility_id = $_POST['facility'];
 
+// connect to the database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
 if (!$link) {
     die('Not connected : ' . mysql_error());
 }
 
+// query the database
 mysql_select_db('cs411backend_food', $link);
 $menu_query = "SELECT * FROM menus WHERE facility_id = $facility_id";
 $result = mysql_query($menu_query)  or die($menu_query. "<br/><br/>".mysql_error());;
 
+$rows = array();
 while(($row = mysql_fetch_row($result)) != null)
 {
-	echo "<a href='/menu.php?menu_id=$row[0]'>$row[1]  --  $row[3]</a><br>";
+	array_push($rows, $row);
 }
 
+echo $twig->render('facility.html', array('menus' => $rows));
 ?>
-
-
-</body>
-</html>
