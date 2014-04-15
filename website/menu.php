@@ -1,6 +1,3 @@
-<html>
-<body>
-
 <?php
 
 // setup Twig
@@ -29,7 +26,3 @@ while(($row = mysql_fetch_row($result)) != null)
 echo $twig->render('menu.html', array('items' => $rows));
 
 ?>
-
-
-</body>
-</html>
