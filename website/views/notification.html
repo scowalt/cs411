@@ -2,17 +2,22 @@
 
 <body>
 	<form method="post" action="notification.php">
-		<input type="text" name="netid">
+		<input type="text" name="netid" size="10">@illinois.edu
+		<br/>
+		Notify me when 
 		<select name="facility">
 			{% for row in facilities %}
 			<option value={{ row[0] }}>{{row[1]}}</option>
 			{% endfor %}
 		</select>
+		<br/>
+		is serving 
 		<select name="item">
 			{% for item in items %}
 			<option value="{{item[0]}}">{{item[0]}}</option>
 			{% endfor %}
 		</select>
+		<br/>
 		<input type="submit" value="Submit" name="submit"/>
 	</form>
 </body>
