@@ -1,19 +1,20 @@
-<html>
+{% extends 'base.html' %}
 
-<body>
-<h1>Project Backend</h1>
-<p>A quest for food.</p>
+{% block title %}Dining Menus Home{% endblock %}
+
+{% block body %}
+
+<p>To get started, select a dining hall</p>
 
 <form method="POST" action='/facility.php'>
 <select name='facility'>
 
 {% for row in facilities %}
-<option value={{ row[0] }}>{{row[1]}}</option>
+<option value="{{ row[0] }}:{{ row[1] }}">{{ row[1] }}</option>
 {% endfor %}
 
 </select>
-<input type="submit" value="GO"/>
+<button type="submit" class="btn btn-default">GO</button>
 </form>
 
-</body>
-</html>
+{% endblock %}

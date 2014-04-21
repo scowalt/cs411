@@ -5,7 +5,10 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
-$facility_id = $_POST['facility'];
+$facility_info = $_POST['facility'];
+$facility_arr = split(":", $facility_info);
+$facility_id = $facility_arr[0];
+$facility_name = $facility_arr[1];
 
 // connect to the database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
@@ -24,5 +27,5 @@ while(($row = mysql_fetch_row($result)) != null)
 	array_push($rows, $row);
 }
 
-echo $twig->render('facility.html', array('menus' => $rows));
+echo $twig->render('facility.html', array('facility_name' => $facility_name, 'menus' => $rows));
 ?>
