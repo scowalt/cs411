@@ -5,6 +5,11 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
+// confirm that the user is logged in
+if (!isset($_SESSION['user_email'])){
+	header('Location: ' . 'http://' . $_SERVER['HTTP_HOST'] . '/google_auth.php?redirect=notification');
+}
+
 // connect to database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
 if (!$link) {
