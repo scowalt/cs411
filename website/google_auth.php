@@ -26,7 +26,6 @@ if (isset($_REQUEST['logout'])) {
   unset($_SESSION['access_token']);
   unset($_SESSION['user_email']);
   echo "Logged out";
-  session_stop();
   die;
 }
 
