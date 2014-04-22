@@ -6,6 +6,9 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
+// start/resume user session for persistent information
+session_start();
+
 // connect to the database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
 if (!$link) {
