@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // setup Twig
 require_once './vendor/autoload.php';
@@ -23,6 +24,6 @@ while(($row = mysql_fetch_row($result)) != null)
 {
 	array_push($rows, $row);
 }
-echo $twig->render('menu.html', array('items' => $rows));
+echo $twig->render('menu.html', array('items' => $rows, 'user' => $_SESSION['user_email']));
 
 ?>
