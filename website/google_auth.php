@@ -21,9 +21,7 @@ $client->setScopes('email'); // need this to confirm netID
   local access token in this case
  ************************************************/
 if (isset($_REQUEST['logout'])) {
-  unset($_SESSION['access_token']);
-  unset($_SESSION['user_email']);
-  unset($_SESSION['auth_state']);
+  logout();
   echo "Logged out";
   die;
 }
@@ -45,7 +43,13 @@ if (isset($_GET['code'])) {
   $_SESSION['access_token'] = $client->getAccessToken();
   $token_data = $client->verifyIdToken()->getAttributes();
   $_SESSION['user_email'] = $token_data['payload']['email'];
+  if (!illinois_email($token_data['payload']['email'])){
+    logout();
+    echo "Not an Illinois email address. Please try again";
+    die;
+  }
   header('Location: '. 'http://' . $_SERVER['HTTP_HOST'] . '/' . decrypt_state(strval($_GET['state'])) .'.php');
+
 }
 
 /************************************************
@@ -74,8 +78,12 @@ if ($client->getAccessToken()) {
   $_SESSION['access_token'] = $client->getAccessToken();
   $token_data = $client->verifyIdToken()->getAttributes();
   $_SESSION['user_email'] = $token_data['payload']['email'];
-  echo $token_data['payload']['email'];
-  // header('Location: '. 'http://' . $_SERVER['HTTP_HOST'] . '/' . decrypt_state(get_state()) .'.php');
+  if (!illinois_email($token_data['payload']['email'])){
+    logout();
+    echo "Not an Illinois email address. Please try again";
+    die;
+  }
+  header('Location: '. 'http://' . $_SERVER['HTTP_HOST'] . '/' . decrypt_state(get_state()) .'.php');
 }
 
 function user_has_access_token(){
@@ -89,6 +97,20 @@ function get_state(){
     $state = $_GET['redirect'];
   }
   return encrypt_state($state);
+}
+
+function netidOf($email){
+  return substr($email, 0, (strlen($email) - 13));
+}
+
+function illinois_email($email){
+  return (strpos($email, "@illinois.edu")) !== false;
+}
+
+function logout(){
+  unset($_SESSION['access_token']);
+  unset($_SESSION['user_email']);
+  unset($_SESSION['auth_state']);
 }
 
 ?>
