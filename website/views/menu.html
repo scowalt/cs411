@@ -27,10 +27,20 @@ $(document).ready(function onReady(){
 		$item = $($row).children(".food_item_wrapper:first").text().trim();
 		$rating = object.target.value;
 		if ($rating){
-			console.log($rating);
-		}
-		else{
-			console.log("removed rating");
+			$.post(
+				'ratings/add.php',
+				{
+					item: $item,
+					rating: $rating
+				}
+			);
+		} else {
+			$.post(
+				'ratings/remove.php',
+				{
+					item: $item
+				}
+			);
 		}
 	});
 });
