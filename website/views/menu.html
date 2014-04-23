@@ -8,9 +8,11 @@
 {% for row in items %}
 	<li class="list-group-item">
 	{{row[0]}}
+	{% if user %}
 	<span class="rating_wrapper" style="float:right">
 		<input class="rating" data-clearable="remove" data-max="5" data-min="1" type="number" />
 	</span>
+	{% endif %}
 	</li>
 {% endfor %}
 </ul>
