@@ -4,8 +4,16 @@
 
 {% block body %}
 
+<ul class="list-group">
 {% for row in items %}
-{{row[1]}} <br/>
+	<li class="list-group-item">
+	{{row[0]}}
+	<span class="rating_wrapper" style="float:right">
+		<input class="rating" data-clearable="remove" data-max="5" data-min="1" type="number" />
+	</span>
+	</li>
 {% endfor %}
+</ul>
 
+<script src="./views/bootstrap-rating-input.min.js"></script>
 {% endblock %}
