@@ -51,7 +51,8 @@ if (isset($_GET['code'])) {
   requests, else we redirect user to an 
   authentication URL.
  ************************************************/
-if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
+if (user_has_access_token()) {
+  echo "Accesss token: \"" . $_SESSION['access_token'] . "\"";
   $client->setAccessToken($_SESSION['access_token']);
 } else {
   $authUrl = $client->createAuthUrl();
@@ -70,6 +71,11 @@ if ($client->getAccessToken()) {
   $_SESSION['access_token'] = $client->getAccessToken();
   $token_data = $client->verifyIdToken()->getAttributes();
   $_SESSION['user_id'] = $token_data;
+}
+
+function user_has_access_token(){
+  return (isset($_SESSION['access_token']) && $_SESSION['access_token'] 
+  && json_encode($_SESSION['access_token']) !== '"[]"');
 }
 
 ?>
