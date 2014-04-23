@@ -7,7 +7,9 @@
 <ul class="list-group">
 {% for row in items %}
 	<li class="list-group-item">
-	{{row[0]}}
+	<span class="food_item_wrapper">
+		{{row[0]}}
+	</span>
 	{% if user %}
 	<span class="rating_wrapper" style="float:right">
 		<input class="rating" data-clearable="remove" data-max="5" data-min="1" type="number" />
@@ -18,4 +20,19 @@
 </ul>
 
 <script src="./views/bootstrap-rating-input.min.js"></script>
+<script>
+$(document).ready(function onReady(){
+	$(".rating").change(function onRating(object){
+		$row = object.target.parentElement.parentElement.parentElement;
+		$item = $($row).children(".food_item_wrapper:first").text().trim();
+		$rating = object.target.value;
+		if ($rating){
+			console.log($rating);
+		}
+		else{
+			console.log("removed rating");
+		}
+	});
+});
+</script>
 {% endblock %}
