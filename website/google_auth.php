@@ -48,6 +48,7 @@ if (isset($_GET['code'])) {
     echo "Not an Illinois email address. Please try again";
     die;
   }
+  add_user(netidOf($token_data['payload']['email']));
   header('Location: '. 'http://' . $_SERVER['HTTP_HOST'] . '/' . decrypt_state(strval($_GET['state'])) .'.php');
 
 }
@@ -91,6 +92,7 @@ function user_has_access_token(){
   && json_encode($_SESSION['access_token']) !== '"[]"');
 }
 
+// get the (encrypted) redirect page name
 function get_state(){
   $state = 'index'; // default redirect page
   if (isset($_GET['redirect']) && $_GET['redirect']){
@@ -99,18 +101,35 @@ function get_state(){
   return encrypt_state($state);
 }
 
+// given netid@illinois.edu, return netid
 function netidOf($email){
   return substr($email, 0, (strlen($email) - 13));
 }
 
+// confirm an email address is @illinios.edu
 function illinois_email($email){
   return (strpos($email, "@illinois.edu")) !== false;
 }
 
+// remove user session information
 function logout(){
   unset($_SESSION['access_token']);
   unset($_SESSION['user_email']);
   unset($_SESSION['auth_state']);
+}
+
+// add user with netid to database
+function add_user($netid){
+  // connect to database
+  $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
+  if (!$link) {
+      die('Not connected : ' . mysql_error());
+  }
+  mysql_select_db('cs411backend_food', $link);
+
+  // add user to database
+  $query = "INSERT IGNORE INTO users (user_net_id) VALUES (\"$netid\")";
+  return $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
 }
 
 ?>

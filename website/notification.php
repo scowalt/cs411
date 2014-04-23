@@ -25,10 +25,6 @@ if(isset($_POST['submit'])){
     $facility = mysql_real_escape_string($_POST['facility']);
     $item = mysql_real_escape_string($_POST['item']);
 
-    // add user to database
-    $query = "INSERT IGNORE INTO users (user_net_id) VALUES (\"$netid\")";
-    $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
-
     // add notification registration to database
     $query = "INSERT INTO notifications (user_net_id, food_name, facility_id) VALUES (\"$netid\",\"$item\",$facility)";
     $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
