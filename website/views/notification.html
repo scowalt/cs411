@@ -14,10 +14,8 @@
 </head>
 <body>
 	<div class="container">
+	{{ user }}
 	<form role="form" method="post" action="notification.php">
-		<div class="form-group">
-			<input type="text" name="netid" id="netid" size="10" placeholder="NetID">@illinois.edu
-		</div>
 		<div class="form-group">Notify me when 
 				<select name="facility">
 					{% for row in facilities %}

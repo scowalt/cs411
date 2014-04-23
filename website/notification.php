@@ -1,4 +1,5 @@
 <?php
+session_start();
 
 // setup Twig
 require_once './vendor/autoload.php';
@@ -20,7 +21,7 @@ mysql_select_db('cs411backend_food', $link);
 // if the form has been submitted
 if(isset($_POST['submit'])){
 	// SQL escape data received
-	$netid = mysql_real_escape_string($_POST['netid']);
+	$netid = mysql_real_escape_string(netidOf($_SESSION['user_email']));
     $facility = mysql_real_escape_string($_POST['facility']);
     $item = mysql_real_escape_string($_POST['item']);
 
@@ -54,8 +55,12 @@ if(isset($_POST['submit'])){
 	}
 
 	// display the notification sign-up form
-	echo $twig->render('notification.html', array('facilities' => $facilities, 'items' => $items));
+	echo $twig->render('notification.html', array('facilities' => $facilities, 'items' => $items, 'user' => $_SESSION['user_email']));
 
+}
+
+function netidOf($email){
+	return substr($email, 0, (strlen($email) - 13));
 }
 
 ?>

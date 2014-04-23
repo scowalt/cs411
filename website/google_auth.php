@@ -9,8 +9,6 @@ require_once './config.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
-$_SESSION['auth_state'] = encrypt_state('test');
-
 // setup google client
 $client = new Google_Client();
 $client->setClientId($client_id);
@@ -25,6 +23,7 @@ $client->setScopes('email'); // need this to confirm netID
 if (isset($_REQUEST['logout'])) {
   unset($_SESSION['access_token']);
   unset($_SESSION['user_email']);
+  unset($_SESSION['auth_state']);
   echo "Logged out";
   die;
 }
@@ -36,14 +35,17 @@ if (isset($_REQUEST['logout'])) {
   bundle in the session, and redirect to ourself.
  ************************************************/
 if (isset($_GET['code'])) {
+  if (strval($_SESSION['auth_state']) !== strval($_GET['state'])) {
+    die('The session state did not match.' .
+      '<br/>' . strval($_SESSION['auth_state'])
+      . '<br/>' . strval($_GET['state'])
+      . '<br/>' . decrypt_state(strval($_GET['state'])));
+  }
   $client->authenticate($_GET['code']);
   $_SESSION['access_token'] = $client->getAccessToken();
   $token_data = $client->verifyIdToken()->getAttributes();
   $_SESSION['user_email'] = $token_data['payload']['email'];
-  echo "All done<br/>" . 
-    $_SESSION['user_email'] . 
-    "<br/>" . $_SESSION['auth_state'] . 
-    "<br/>" . decrypt_state($_SESSION['auth_state']);
+  header('Location: '. 'http://' . $_SERVER['HTTP_HOST'] . '/' . decrypt_state(strval($_GET['state'])) .'.php');
 }
 
 /************************************************
@@ -52,10 +54,11 @@ if (isset($_GET['code'])) {
   authentication URL.
  ************************************************/
 if (user_has_access_token()) {
-  echo "Accesss token: \"" . $_SESSION['access_token'] . "\"";
   $client->setAccessToken($_SESSION['access_token']);
 } else {
-  $authUrl = $client->createAuthUrl();
+  $_SESSION['auth_state'] = get_state();
+  $client->setState(get_state());
+  $authUrl = $client->createAuthUrl();  
   header('Location: ' . filter_var($authUrl, FILTER_SANITIZE_URL));
 }
 
@@ -70,12 +73,22 @@ if (user_has_access_token()) {
 if ($client->getAccessToken()) {
   $_SESSION['access_token'] = $client->getAccessToken();
   $token_data = $client->verifyIdToken()->getAttributes();
-  $_SESSION['user_id'] = $token_data;
+  $_SESSION['user_email'] = $token_data['payload']['email'];
+  echo $token_data['payload']['email'];
+  // header('Location: '. 'http://' . $_SERVER['HTTP_HOST'] . '/' . decrypt_state(get_state()) .'.php');
 }
 
 function user_has_access_token(){
   return (isset($_SESSION['access_token']) && $_SESSION['access_token'] 
   && json_encode($_SESSION['access_token']) !== '"[]"');
+}
+
+function get_state(){
+  $state = 'index'; // default redirect page
+  if (isset($_GET['redirect']) && $_GET['redirect']){
+    $state = $_GET['redirect'];
+  }
+  return encrypt_state($state);
 }
 
 ?>
