@@ -1,8 +1,9 @@
 <?php
 session_start();
 
-if (!isset($_POST['rating']) || !isset($_POST['item']))
+if (!isset($_POST['rating']) || !isset($_POST['item'])){
 	die;
+}
 
 // connect to the database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
@@ -17,7 +18,7 @@ $item = mysql_real_escape_string($_POST['item']);
 
 // query the database
 $query = "INSERT INTO ratings (user_net_id, food_name, rating) VALUES " .
-	"($netid, $item, $rating)";
+	"(\"$netid\", \"$item\", $rating)";
 $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
 
 function netidOf($email){

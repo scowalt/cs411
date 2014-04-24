@@ -16,7 +16,7 @@ $item = mysql_real_escape_string($_POST['item']);
 
 // query the database
 $query = "DELETE from ratings " .
-	"WHERE user_net_id = $netid AND food_name = $item";
+	"WHERE user_net_id = \"$netid\" AND food_name = \"$item\"";
 $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
 
 function netidOf($email){
