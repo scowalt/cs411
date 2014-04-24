@@ -18,7 +18,8 @@ $item = mysql_real_escape_string($_POST['item']);
 
 // query the database
 $query = "INSERT INTO ratings (user_net_id, food_name, rating) VALUES " .
-	"(\"$netid\", \"$item\", $rating)";
+	"(\"$netid\", \"$item\", $rating)" . 
+	" ON DUPLICATE KEY UPDATE rating = $rating";
 $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
 
 function netidOf($email){
