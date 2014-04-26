@@ -26,10 +26,11 @@ if(isset($_POST['submit'])){
     $item = mysql_real_escape_string($_POST['item']);
 
     // add notification registration to database
-    $query = "INSERT INTO notifications (user_net_id, food_name, facility_id) VALUES (\"$netid\",\"$item\",$facility)";
+    $query = "INSERT IGNORE INTO notifications (user_net_id, food_name, facility_id) VALUES (\"$netid\",\"$item\",$facility)";
     $result = mysql_query($query) or die($query . "<br/><br />" . mysql_error());;
 
 	// display whether or not signing up for the notification was successful
+	header("refresh:2;url=notification.php");
 	echo "notification registration successful";
 } else {
 	// query the database for facilities	
