@@ -4,6 +4,17 @@
 
 {% block body %}
 
-<p>TODO -- Stephen: run the recommendation algorithm and output recommended meals</p>
+<p>TODO -- Stephen: run the recommendation algorithm and output recommended meals.
+        The below data is a random query.</p>
+
+<ul class="list-group">
+{% for row in items %}
+        <li class="list-group-item">
+        <span class="food_item_wrapper">
+                {{row[0]}}
+        </span>
+        </li>
+{% endfor %}
+</ul>
 
 {% endblock %}
