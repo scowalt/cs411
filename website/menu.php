@@ -37,7 +37,12 @@ while(($row = mysql_fetch_row($result)) != null)
 {
 	array_push($food_items, $row);
 }
-echo $twig->render('menu.html', array('items' => $food_items, 'user' => $_SESSION['user_email']));
+
+echo $twig->render('menu.html', array(
+	'is_logged_in' => isset($_SESSION['user_email']),
+	'items' => $food_items,
+	'user' => $_SESSION['user_email'])
+);
 
 function netidOf($email){
 	return substr($email, 0, (strlen($email) - 13));

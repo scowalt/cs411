@@ -51,7 +51,12 @@ if(isset($_POST['submit'])){
 	}
 
 	// display the notification sign-up form
-	echo $twig->render('notification.html', array('facilities' => $facilities, 'items' => $items, 'user' => $_SESSION['user_email']));
+	echo $twig->render('notification.html', array(
+		'is_logged_in' => isset($_SESSION['user_email']),
+		'facilities' => $facilities,
+		'items' => $items,
+		'user' => $_SESSION['user_email'])
+	);
 
 }
 

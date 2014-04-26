@@ -1,0 +1,49 @@
+h1 {
+	color: #0A94CF;
+}
+
+a {
+	color: #0A94CF;
+}
+
+body {
+	background-color: #C7D9E9;
+	font-size: 20px;
+	color: #0A94CF;
+}
+
+.main {
+	width: 70%;
+	margin: 30px auto;
+	text-align: left;
+	background-color: #C7D9E9;
+}
+
+.top-section {
+	height: 120px;
+	background-color: #0A94CF;
+	color: #C7D9E9;
+}
+
+.top-menu {
+	text-align: right;
+	font-size: 14px;
+	padding-top: 4px;
+	padding-right: 8px;
+}
+
+.top-menu a {
+	color: #C7D9E9;
+	padding: 0px 2px 0px 2px;
+}
+
+.site-title {
+        text-align: center;
+        font-size: 44px;
+        padding-top: 12px;
+}
+
+.site-title a {
+        color: #C7D9E9;
+	text-decoration: none;
+}

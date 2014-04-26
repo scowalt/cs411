@@ -26,5 +26,8 @@ while(($row = mysql_fetch_row($result)) != null)
     array_push($rows, $row);
 }
 
-echo $twig->render('index.html', array('facilities' => $rows))
+echo $twig->render('index.html', array(
+	'is_logged_in' => isset($_SESSION['user_email']),
+	'facilities' => $rows)
+);
 ?>

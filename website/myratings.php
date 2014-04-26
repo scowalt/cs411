@@ -6,6 +6,15 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
+// confirm that the user is logged in
+if (!isset($_SESSION['user_email'])){
+        header('Location: ' . 'http://' . $_SERVER['HTTP_HOST'] . '/google_auth.php?redirect=myratings');
+}
+
+
+/* TODO -- Will: get user email and query database for all user ratings
+		display them to allow rating editing. ideally sort by rating.
+
 $facility_info = $_POST['facility'];
 $facility_arr = split(":", $facility_info);
 $facility_id = $facility_arr[0];
@@ -25,11 +34,13 @@ $result = mysql_query($menu_query)  or die($menu_query. "<br/><br/>".mysql_error
 $rows = array();
 while(($row = mysql_fetch_row($result)) != null)
 {
-	array_push($rows, $row);
+        array_push($rows, $row);
 }
+*/
 
-echo $twig->render('facility.html', array(
-	'is_logged_in' => isset($_SESSION['user_email']),
-	'facility_name' => $facility_name, 'menus' => $rows)
+
+echo $twig->render('myratings.html', array(
+	'is_logged_in' => isset($_SESSION['user_email']))
 );
 ?>
+
