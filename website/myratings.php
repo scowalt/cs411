@@ -25,10 +25,11 @@ if (!$link) {
 
 // query the database
 mysql_select_db('cs411backend_food', $link);
-$ratings_query = "SELECT food_items.food_name, rating FROM " .
-                "food_items LEFT JOIN ratings " .
-                "ON food_items.food_name = ratings.food_name " .
-                "AND user_net_id = \"$netid\"";
+$ratings_query = "SELECT food_items.food_name, rating " .
+                 "FROM food_items LEFT JOIN ratings " .
+                 "ON food_items.food_name = ratings.food_name " .
+                 "WHERE user_net_id = \"$netid\" " .
+                 "ORDER BY rating DESC";
 
 $result = mysql_query($ratings_query)  or die($ratings_query. "<br/><br/>".mysql_error());;
 
