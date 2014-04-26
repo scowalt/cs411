@@ -22,6 +22,7 @@ $client->setScopes('email'); // need this to confirm netID
  ************************************************/
 if (isset($_REQUEST['logout'])) {
   logout();
+  header("refresh:3;url=index.php");
   echo "Logged out";
   die;
 }
@@ -45,6 +46,7 @@ if (isset($_GET['code'])) {
   $_SESSION['user_email'] = $token_data['payload']['email'];
   if (!illinois_email($token_data['payload']['email'])){
     logout();
+    header("refresh:3;url=google_auth.php");
     echo "Not an Illinois email address. Please try again";
     die;
   }
@@ -81,6 +83,7 @@ if ($client->getAccessToken()) {
   $_SESSION['user_email'] = $token_data['payload']['email'];
   if (!illinois_email($token_data['payload']['email'])){
     logout();
+    header("refresh:3;url=google_auth.php");
     echo "Not an Illinois email address. Please try again";
     die;
   }
