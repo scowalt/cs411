@@ -22,6 +22,21 @@
 				</select></div>
 		<input type="submit" value="Submit" name="submit"/>
 	</form>
+	<h2>Current Notifications:</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Food Item</th>
+				<th>Location</th>				
+			</tr>
+		</thead>
+		{% for notification in notifications %}
+		<tr>
+			<th>{{notification[0]}}</th>
+			<th>{{notification[1]}}</th>
+		</tr>
+		{% endfor %}
+	</table>
 	</div>
 
 {% endblock %}

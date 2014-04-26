@@ -18,10 +18,11 @@ if (!$link) {
 }
 mysql_select_db('cs411backend_food', $link);
 
+$netid = mysql_real_escape_string(netidOf($_SESSION['user_email']));
+
 // if the form has been submitted
 if(isset($_POST['submit'])){
-	// SQL escape data received
-	$netid = mysql_real_escape_string(netidOf($_SESSION['user_email']));
+	// SQL escape data received	
     $facility = mysql_real_escape_string($_POST['facility']);
     $item = mysql_real_escape_string($_POST['item']);
 
@@ -51,12 +52,22 @@ if(isset($_POST['submit'])){
 	    array_push($items, $row);
 	}
 
+	// query the database for exisitng notifications from the user
+	$notifications_query = "SELECT food_name,name FROM notifications NATURAL JOIN facilities WHERE user_net_id=\"$netid\" ORDER BY food_name ASC;";
+	$result = mysql_query($notifications_query) or die($notifications_query . "<br/>" . mysql_error());;
+	$notifications = array();
+	while(($row = mysql_fetch_row($result)) != null)
+	{
+	    array_push($notifications, $row);
+	}
+
 	// display the notification sign-up form
 	echo $twig->render('notification.html', array(
 		'is_logged_in' => isset($_SESSION['user_email']),
 		'facilities' => $facilities,
 		'items' => $items,
-		'user' => $_SESSION['user_email'])
+		'user' => $_SESSION['user_email'],
+		'notifications' => $notifications)
 	);
 
 }
