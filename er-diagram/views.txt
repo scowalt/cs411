@@ -1,0 +1,45 @@
+# Join all users to their ratings and the associated food
+CREATE OR REPLACE VIEW userFoodRatings AS 
+SELECT * 
+FROM ratings NATURAL JOIN food_items;
+
+# This should be a list of users who have rated foods the user has rated
+CREATE OR REPLACE VIEW userFoodFriends AS 
+SELECT u1.user_net_id AS user_net_id, u1.rating AS user_rating, u1.food_name AS
+	food_name, u2.user_net_id AS friend_net_id, u2.rating AS friend_rating
+FROM userFoodRatings u1 JOIN userFoodRatings u2
+	WHERE u1.food_name = u2.food_name AND u1.user_net_id != u2.user_net_id;
+	
+	# This should get the amount the user differs from friends in ratings for each food
+CREATE OR REPLACE VIEW userFriendRatios AS 
+SELECT user_net_id, friend_net_id, food_name,
+	(user_rating - friend_rating) * (user_rating - friend_rating) AS diff
+FROM userFoodFriends
+GROUP BY friend_net_id
+HAVING COUNT(food_name) > 5;
+
+# This gets the users with the lowest average difference in ratings
+CREATE OR REPLACE VIEW userBestFriends AS 
+SELECT user_net_id, friend_net_id, AVG(diff) AS variance 
+FROM userFriendRatios
+GROUP BY user_net_id HAVING variance < 1 ORDER BY variance ASC;
+
+# This gets food best friends like
+CREATE OR REPLACE VIEW bestFriendFood AS
+SELECT user_net_id, friend_net_id, food_name, rating
+FROM userBestFriends u1 JOIN userFoodRatings u2
+WHERE u2.user_net_id = friend_net_id GROUP BY user_net_id;
+
+# This gets the highest rated foods
+CREATE OR REPLACE VIEW goodFood AS 
+SELECT food_name, AVG(rating) AS avg_rating
+	FROM food_items NATURAL JOIN ratings
+	GROUP BY food_name 
+	HAVING avg_rating >= 4 
+	ORDER BY avg_rating DESC;
+
+# This gets food the user enjoys
+CREATE OR REPLACE VIEW userFood AS
+SELECT *
+FROM userFoodRatings 
+WHERE rating >= 4;
