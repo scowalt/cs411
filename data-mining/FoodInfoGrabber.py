@@ -13,7 +13,16 @@ import datetime
 
 nutTypes = ["Calories", "Total Fat", "Saturated Fat", "Polyunsaturated Fat", "Monounsaturated Fat", "Cholesterol", "Sodium", "Total Carbohydrate", "Dietary Fiber", "Vitamin A", "Vitamin C", "Calcium", "Iron", "Protein", "Sugars"]
 
+facilities = [{"name":"Busey Evans", "id":1, "parts":[2]}, {"name":"Florida Avenue", "id":5, "parts":[6]}, {"name":"Ikenberry", "id":10, "parts":[12, 13, 14, 15, 16, 17, 18, 19]}, {"name":"Illinois Street", "id":23, "parts":[24]}, {"name":"Lincoln Avenue", "id":28, "parts":[29]}, {"name":"PAR", "id":33, "parts":[34, 35, 36, 37, 38]}]
+
+mealTypes = ["Breakfast", "Lunch", "Dinner"]
+
 class FoodInfoGrabber:
+    facilityUrl = "http://eatsmart.housing.illinois.edu/NetNutrition/Unit.aspx/SelectUnitFromUnitsList"
+    partUrl = "http://eatsmart.housing.illinois.edu/NetNutrition/Unit.aspx/SelectUnitFromChildUnitsList"
+    menuUrl = "http://eatsmart.housing.illinois.edu/NetNutrition/Menu.aspx/SelectMenu" 
+    nutUrl = "http://eatsmart.housing.illinois.edu/NetNutrition/Home.aspx/NutritionDetail.aspx/ShowItemNutritionLabel"
+
     def __init__(self):
         #Create CookieJar to hold session cookies
         self.cj = cookielib.CookieJar()
@@ -22,37 +31,67 @@ class FoodInfoGrabber:
         #Get initial ASP session cookies. Cookies will be store in cj
         r = self.opener.open("http://eatsmart.housing.illinois.edu/NetNutrition/46")
 
-    def getMenu(self, menuCode):
-        # (for some reason) this call needs to be made first
-        values = {'unitOid': 1} # this code doesn't matter
+    def makeRequest(self, values, url):
         data = urllib.urlencode(values)
-        req = urllib2.Request("http://eatsmart.housing.illinois.edu/NetNutrition/Unit.aspx/SelectUnitFromChildUnitsList", data, {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"})
+        req = urllib2.Request(url, data, {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"})
         r = self.opener.open(req)
+        return json.loads(r.read())
+
+    def getFacilityParts(self, facilityCode):
+        values = {'unitOid': facilityCode}
+        parts = self.makeRequest(values, self.facilityUrl)
+        for panel in parts['panels'] :
+            if panel['id'] == "childUnitsPanel" :
+                html = panel['html']
+                break
+        parsed_html = BeautifulSoup(html)
+        print(parsed_html.prettify())
+
+    def getMenus(self, facilityCode, partCode): 
+        values = {'unitOid': facilityCode}
+        self.makeRequest(values, self.facilityUrl)
+        values = {'unitOid': partCode}
+        menus = self.makeRequest(values, self.partUrl)
+        for panel in menus['panels'] :
+            if panel['id'] == "menuPanel" :
+                html = panel['html']
+                break
+        parsed_html = BeautifulSoup(html)
+        menuIdList = []
+        for menu in parsed_html.find_all("a"):
+            if menu.string in mealTypes :
+                onClick = menu.get("onclick")
+                onClick = onClick.replace("javascript:menuListSelectMenu(", "");
+                onClick = onClick.replace(");", "");
+                menuIdList.append(int(onClick))
+        return menuIdList
+
+    def getMenu(self, facilityCode, menuCode):
+        # (for some reason) this call needs to be made first
+        values = {'unitOid': facilityCode} # this code doesn't matter
+        self.makeRequest(values, self.partUrl)
         
         #Now menu can be fetched
         values = {'menuOid' : menuCode}
-        data = urllib.urlencode(values)
-        req = urllib2.Request("http://eatsmart.housing.illinois.edu/NetNutrition/Menu.aspx/SelectMenu", data, {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"})
-        r = self.opener.open(req)
         #Response is in JSON
-        foods = json.loads(r.read())
+        foods = self.makeRequest(values, self.menuUrl)
 
         html = foods['panels'][0]['html']
         
         parsed_html = BeautifulSoup(html)
         header = parsed_html.find_all(self.__header)[0].text.encode('utf8')
         parsed_header = self.__parse_header(header)
-        (facility_name, date_string, meal, menu_name) = parsed_header
+        (facility_name, date_string, meal) = parsed_header
         food_items = parsed_html.find_all(self.__food_item_row)
         menu = {'date_string': date_string,
+                'facility_id': facilityCode,
                 'facility': facility_name,
                 'meal': meal,
-                'menu_name': menu_name,
                 'id': menuCode,
                 'food': {}}
 
         for item in food_items:
-            food_name = str(item.find_all('td')[1].text)
+            food_name = item.find_all('td')[1].text.encode('utf-8').replace('"', '')
             food_id = int(str(item.find_all('td')[1]['onmouseover'])[47:55])
             food_category = self.__get_item_category(item)
             menu['food'][food_id] = {'name': food_name, 'category': food_category}
@@ -69,19 +108,17 @@ class FoodInfoGrabber:
         return str(tag.td.text.strip())
     def __header(self, tag):
         return tag.name == 'div' and tag.has_attr('class') and 'cbo_nn_itemHeaderDiv' in str(tag['class'])
-    def __parse_header(self, header):
-        regex = re.compile(r'Menu\sFor  -  ([a-zA-Z\s]*) -  ([a-zA-Z0-9\s\,]*) -  ([a-zA-Z\s]*) -  ([a-zA-Z\s]*)', re.UNICODE)
+    def __parse_header(self, header): 
+        regex = re.compile(r'Menu\sFor  -  ([a-zA-Z\s]*) -  ([a-zA-Z0-9\s\,]*) -  ([a-zA-Z\s]*)', re.UNICODE)
         matches = regex.match(header)
         return matches.groups()
 
-    def getNutritionalInformation(self, menuCode, foodCode):
-        self.getMenu(menuCode)
-
+    def getNutritionalInformation(self, facilityCode, menuCode, foodCode):
+        self.getMenu(facilityCode, menuCode)
         values = {'detailOid': foodCode}
-        url = "http://eatsmart.housing.illinois.edu/NetNutrition/Home.aspx/NutritionDetail.aspx/ShowItemNutritionLabel"
         data = urllib.urlencode(values)
         headers = {"Host":"eatsmart.housing.illinois.edu", "Origin":"http://eatsmart.housing.illinois.edu","Referer":"http://eatsmart.housing.illinois.edu/NetNutrition/46"}
-        req = urllib2.Request(url, data, headers)
+        req = urllib2.Request(self.nutUrl, data, headers)
         r = self.opener.open(req)
 
         html = r.read()
@@ -110,20 +147,10 @@ class FoodInfoGrabber:
 
     def __vitamin(self, tag):
         return tag.name == 'td' and tag.has_attr('class') and 'cbo_nn_SecondaryNutrientLabel' in str(tag['class'])
-
-if __name__ == "__main__":
-    #menuCode = 513665 #dinner at FAR on March 9th
-    #menuCode = 514650 #dinner at Busey on March 21st
-    #foodCode = 43305418 # Tiramisu
-    
-    menuCode = int(sys.argv[1])
-
-    fig = FoodInfoGrabber()
-    menu = fig.getMenu(menuCode)
+   
+def commitMenuAndFoods(menu, db):
     for foodID, foodInfo in menu['food'].items():
-        menu['food'][foodID]['nutrition'] = fig.getNutritionalInformation(menuCode,foodID)
-            
-    db = MySQLdb.connect(host="engr-cpanel-mysql.engr.illinois.edu", user="**********", passwd="********", db="cs411backend_food")
+        menu['food'][foodID]['nutrition'] = fig.getNutritionalInformation(menu['facility_id'], menu['id'], foodID)
     
     cur = db.cursor()
     
@@ -154,5 +181,27 @@ if __name__ == "__main__":
         cur.execute("INSERT IGNORE INTO nutritional_information(food_name, calories, total_fat, saturated_fat, polyunsaturated_fat, monounsaturated_fat, cholesterol, sodium, total_carbohydrate, dietary_fiber, vitamin_a, vitamin_c, calcium, iron, protein, sugar) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", nutTup)
 
     db.commit();
-    print menu
-    print menu['meal'], "|", menu['menu_name'], "|", menu['date_string']
+
+if __name__ == "__main__":
+    db = MySQLdb.connect(host="engr-cpanel-mysql.engr.illinois.edu", user="cs411backend_jsu", passwd="cs411pass", db="cs411backend_food")
+    
+    fig = FoodInfoGrabber()
+    
+    for facility in facilities :
+        menuIds = []
+        for part in facility['parts']:
+            menuIds = menuIds + fig.getMenus(facility['id'], part)
+        menus = []
+        for menuId in menuIds :
+            menu = fig.getMenu(facility['id'], menuId)
+            found = False
+            for prevMenu in menus :
+                if prevMenu["date_string"] == menu["date_string"] and prevMenu["meal"] == menu["meal"] :
+                    prevMenu['food'] = dict(prevMenu['food'].items() + menu['food'].items())
+                    found = True
+                    break
+            if not found :
+                menus.append(menu)
+        for item in menus :
+            print "Committing", item['date_string'], item['meal'], "at", item['facility']
+            commitMenuAndFoods(item, db)
