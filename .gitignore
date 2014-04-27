@@ -1,2 +1,6 @@
 *.bak
 Thumbs.db
+*.sublime-project
+*.sublime-workspace
+sftp-config.json
+website/config.php

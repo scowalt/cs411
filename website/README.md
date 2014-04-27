@@ -1,0 +1,1 @@
+Put these files (recursively) into ~/public_html

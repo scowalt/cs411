@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Notifications{% endblock %}
+
+
+{% block body %}
+
+	<div class="container">
+	<form role="form" method="post" action="notification.php">
+		{{ user }}
+		<div class="form-group">Notify me when 
+				<select name="facility">
+					{% for row in facilities %}
+					<option value={{ row[0] }}>{{row[1]}}</option>
+					{% endfor %}
+				</select></div>
+		<div class="form-group">is serving 
+				<select name="item">
+					{% for item in items %}
+					<option value="{{item[0]}}">{{item[0]}}</option>
+					{% endfor %}
+				</select></div>
+		<input type="submit" value="Submit" name="submit"/>
+	</form>
+	<h2>Current Notifications:</h2>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Food Item</th>
+				<th>Location</th>				
+			</tr>
+		</thead>
+		{% for notification in notifications %}
+		<tr>
+			<th>{{notification[0]}}</th>
+			<th>{{notification[1]}}</th>
+		</tr>
+		{% endfor %}
+	</table>
+	</div>
+
+{% endblock %}

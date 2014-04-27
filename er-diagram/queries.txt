@@ -1,0 +1,123 @@
+################################################
+##                  SELECTS                   ##
+################################################
+
+# CHECKED
+# Selects ratings of users 
+SELECT * FROM users NATURAL JOIN ratings WHERE user_net_id = INPUT(user_net_id);
+
+# CHECKED
+# Selects ratings of food items
+SELECT * FROM food_items NATURAL JOIN ratings WHERE INPUT(food_items.food_name) = ratings.food_name;
+
+# CHECKED
+# Selects food in specified category
+SELECT * FROM food_items NATURAL JOIN categories WHERE INPUT(category_name) = category_name;
+
+# CHECKED
+# Select nutritional information of food
+SELECT * FROM food_items NATURAL JOIN nutritional_information WHERE INPUT(food_name) = food_name;
+
+# CHECKED
+# Select menus with specified food_item
+SELECT * FROM food_items NATURAL JOIN menus_have_food_items NATURAL JOIN menus WHERE INPUT(food_name) = food_name;
+
+# CHECKED
+# Select menus of specified facility
+SELECT * FROM facilities NATURAL JOIN menus WHERE INPUT(facility_id) = facility_id;
+
+# CHECKED
+# Find average rating of a given food
+SELECT food_name, AVG(rating) FROM ratings WHERE food_name = INPUT(food_name);
+
+
+################################################
+##                  INSERTS                   ##
+################################################
+
+# CHECKED
+# Insert user into database
+INSERT INTO users (user_net_id) VALUES (INPUT(user_net_id));
+
+# CHECKED
+# Insert rating into database
+INSERT INTO ratings (user_net_id, food_name, rating) VALUES (INPUT(user_net_id), INPUT(food_name), INPUT(rating));
+
+# CHECKED
+# Insert food_item into database
+INSERT INTO food_items (food_name, category_name) VALUES (INPUT(food_name), INPUT(category_name));
+
+# CHECKED
+# Insert category into database
+INSERT INTO categories (category_name) VALUES (INPUT(category_name));
+
+# CHECKED
+# Insert nutritional_information into database
+INSERT INTO nutritional_information (food_name, calories, total_fat, saturated_fat, polyunsaturated_fat, monounsaturated_fat, cholesterol, sodium, total_carbohydrate, dietary_fiber, vitamin_a, vitamin_c, calcium, iron) VALUES (INPUT(food_name, calories, total_fat, saturated_fat, polyunsaturated_fat, monounsaturated_fat, cholesterol, sodium, total_carbohydrate, dietary_fiber, vitamin_a, vitamin_c, calcium, iron));
+
+# CHECKED
+# Insert menu into database
+INSERT INTO menus (menus_id, date, facility_id) VALUES (INPUT(menus_id), INPUT(date), INPUT(facility_id));
+
+# Insert food into menu in database
+INSERT INTO menus_have_food_items (menus_id, food_name) VALUES (INPUT(menus_id), INPUT(food_name));
+
+
+
+################################################
+##                  DELETES                   ##
+################################################
+
+# CHECKED
+# Delete user from database
+DELETE FROM users WHERE user_net_id=INPUT(user_net_id);
+
+# CHECKED
+# Delete individual ratings from database
+DELETE FROM ratings WHERE user_net_id=INPUT(user_net_id) AND food_name=INPUT(food_name);
+
+# CHECKED
+# Delete all ratings for a particular food
+DELETE FROM ratings WHERE food_name = INPUT(food_name);
+
+# CHECKED
+# Delete all ratings for a particular user
+DELETE FROM ratings WHERE user_net_id = INPUT(user_net_id);
+
+# CHECKED
+# Delete food item from database
+DELETE FROM food_items WHERE food_name=INPUT(food_name);
+
+# CHECKED
+# Delete nutritional_information from database
+DELETE FROM nutritional_information WHERE food_name=INPUT(food_name);
+
+# CHECKED
+# Delete category from database
+DELETE FROM categories WHERE category_name = INPUT(category_name);
+
+# CHECKED
+# Delete menu from database
+DELETE FROM menus WHERE menus_id = INPUT(menus_id);
+
+# CHECKED
+# Delete food item from menu
+DELETE FROM menus_have_food_items WHERE menus_id=INPUT(menus_id) AND food_name = INPUT(food_name);
+
+# CHECKED
+# Delete facility from database
+DELETE FROM facilities WHERE facility_id = INPUT(facility_id);
+
+
+################################################
+##                  UPDATES                   ##
+################################################
+
+# Update netid of user
+UPDATE users SET user_net_id = INPUT(new_user_net_id) WHERE user_net_id = INPUT(user_net_id);
+
+# Update user rating of specific food
+UPDATE ratings SET rating = INPUT(rating) WHERE user_net_id = INPUT(user_net_id) AND food_name = INPUT(food_name);
+
+# Update name of food
+UPDATE food_items SET food_name = INPUT(new_food_name) WHERE food_name = INPUT(food_name);
