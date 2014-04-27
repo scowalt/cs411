@@ -10,7 +10,7 @@ SELECT u1.user_net_id AS user_net_id, u1.rating AS user_rating, u1.food_name AS
 FROM userFoodRatings u1 JOIN userFoodRatings u2
 	WHERE u1.food_name = u2.food_name AND u1.user_net_id != u2.user_net_id;
 	
-	# This should get the amount the user differs from friends in ratings for each food
+# This should get the amount the user differs from friends in ratings for each food
 CREATE OR REPLACE VIEW userFriendRatios AS 
 SELECT user_net_id, friend_net_id, food_name,
 	(user_rating - friend_rating) * (user_rating - friend_rating) AS diff
