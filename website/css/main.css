@@ -1,49 +1,79 @@
+/*
+ *  Color Scheme
+ *  blue       = #1BB6BA
+ *  orange     = #FBAC2B
+ *  light grey = #CCC
+ *  dark grey  = #4F5050
+*/
+
+
 h1 {
-	color: #0A94CF;
+        color: #1BB6BA;
+}
+
+h2 {
+        color: #1BB6BA;
 }
 
 a {
-	color: #0A94CF;
+        color: #1BB6BA;
 }
 
 body {
-	background-color: #C7D9E9;
-	font-size: 20px;
-	color: #0A94CF;
+        background-color: #CCC;
+        font-size: 20px;
+        color: #4F5050;
 }
 
 .main {
-	width: 70%;
-	margin: 30px auto;
-	text-align: left;
-	background-color: #C7D9E9;
+        width: 70%;
+        margin: 30px auto;
+        text-align: left;
+        background-color: #CCC;
 }
 
 .top-section {
-	height: 120px;
-	background-color: #0A94CF;
-	color: #C7D9E9;
+        height: 160px;
+        background-color: #FBAC2B;
+        color: #4F5050;
 }
 
 .top-menu {
-	text-align: right;
-	font-size: 14px;
-	padding-top: 4px;
-	padding-right: 8px;
+        text-align: right;
+        font-size: 14px;
+        padding-top: 4px;
+        padding-right: 8px;
 }
 
 .top-menu a {
-	color: #C7D9E9;
-	padding: 0px 2px 0px 2px;
+        color: #4F5050;
+        padding: 0px 2px 0px 2px;
 }
 
 .site-title {
         text-align: center;
         font-size: 44px;
-        padding-top: 12px;
+        padding-top: 24px;
+        vertical-align: middle;
 }
 
 .site-title a {
-        color: #C7D9E9;
-	text-decoration: none;
+        color: #4F5050;
+        text-decoration: none;
+}
+
+.rating-color {
+        color: #FBAC2B;
+}
+
+.centered-panel {
+        width: 600px;
+        margin: 0px auto;
+        margin-top: 140px;
+        text-align: center;
+}
+
+.panel-custom {
+        background-color: #1BB6BA;
+        color: #ffffff;
 }

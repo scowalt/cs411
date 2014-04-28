@@ -6,7 +6,7 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
-$facility_info = $_POST['facility'];
+$facility_info = $_GET['facility'];
 $facility_arr = split(":", $facility_info);
 $facility_id = $facility_arr[0];
 $facility_name = $facility_arr[1];
