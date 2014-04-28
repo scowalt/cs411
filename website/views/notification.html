@@ -27,16 +27,37 @@
 		<thead>
 			<tr>
 				<th>Food Item</th>
-				<th>Location</th>				
+				<th>Location</th>			
+				<th></th>
 			</tr>
 		</thead>
 		{% for notification in notifications %}
 		<tr>
 			<th>{{notification[0]}}</th>
 			<th>{{notification[1]}}</th>
+			<th><form class="notification_delete" style="margin-bottom=0em"><input type="hidden" name="facility_id" value="{{notification[2]}}"><input type="submit" value="X"><input type="hidden" name="food_name" value="{{notification[0]}}"></form></th>
 		</tr>
 		{% endfor %}
 	</table>
 	</div>
+
+	<script>
+$(document).ready(function onReady(){
+	$(".notification_delete").submit(function(e){
+		e.preventDefault();
+		var $form = $(this);
+		var facility_id = $form.find( "input[name='facility_id']" ).val();
+		var item = $form.find( "input[name='food_name']" ).val();
+		$.post(
+            'notifications/remove.php',
+            {
+                item: item,
+                facility_id: facility_id
+            }
+        );
+        $form.parent().parent().remove();
+	});	
+});
+	</script>
 
 {% endblock %}

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-if (!isset($_POST['location']) || !isset($_POST['item'])){
+if (!isset($_POST['facility_id']) || !isset($_POST['item'])){
 	die;
 }
 
