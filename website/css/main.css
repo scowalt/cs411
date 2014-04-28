@@ -77,3 +77,8 @@ body {
         background-color: #1BB6BA;
         color: #ffffff;
 }
+
+.list-group-item a {
+        color: #1BB6BA;
+        text-decoration: none;
+}
