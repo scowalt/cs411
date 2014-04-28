@@ -6,10 +6,14 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
-$facility_info = $_POST['facility'];
+$facility_info = $_GET['facility'];
 $facility_arr = split(":", $facility_info);
 $facility_id = $facility_arr[0];
 $facility_name = $facility_arr[1];
+
+if(!isset($facility_info) || $facility_id === "") {
+        header( 'Location: http://cs411backend.web.engr.illinois.edu' );
+}
 
 // connect to the database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
@@ -25,11 +29,11 @@ $result = mysql_query($menu_query)  or die($menu_query. "<br/><br/>".mysql_error
 $rows = array();
 while(($row = mysql_fetch_row($result)) != null)
 {
-	array_push($rows, $row);
+        array_push($rows, $row);
 }
 
 echo $twig->render('facility.html', array(
-	'is_logged_in' => isset($_SESSION['user_email']),
-	'facility_name' => $facility_name, 'menus' => $rows)
+        'is_logged_in' => isset($_SESSION['user_email']),
+        'facility_name' => $facility_name, 'menus' => $rows)
 );
 ?>

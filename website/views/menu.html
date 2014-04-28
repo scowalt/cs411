@@ -6,43 +6,43 @@
 
 <ul class="list-group">
 {% for row in items %}
-	<li class="list-group-item">
-	<span class="food_item_wrapper">
-		{{row[0]}}
-	</span>
-	{% if user %}
-	<span class="rating_wrapper" style="float:right">
-		<input class="rating" data-clearable="remove" data-max="5" data-min="1" type="number" value="{{row[1]}}"/>
-	</span>
-	{% endif %}
-	</li>
+        <li class="list-group-item">
+        <span class="food_item_wrapper">
+                {{row[0]}}
+        </span>
+        {% if user %}
+        <span class="rating_wrapper" style="float:right; color: #FBAC2B;">
+                <input class="rating" data-clearable=" " data-max="5" data-min="1" type="number" value="{{row[1]}}"/>
+        </span>
+        {% endif %}
+        </li>
 {% endfor %}
 </ul>
 
 <script src="./views/bootstrap-rating-input.min.js"></script>
 <script>
 $(document).ready(function onReady(){
-	$(".rating").change(function onRating(object){
-		$row = object.target.parentElement.parentElement.parentElement;
-		$item = $($row).children(".food_item_wrapper:first").text().trim();
-		$rating = object.target.value;
-		if ($rating){
-			$.post(
-				'ratings/add.php',
-				{
-					item: $item,
-					rating: $rating
-				}
-			);
-		} else {
-			$.post(
-				'ratings/remove.php',
-				{
-					item: $item
-				}
-			);
-		}
-	});
+        $(".rating").change(function onRating(object){
+                $row = object.target.parentElement.parentElement.parentElement;
+                $item = $($row).children(".food_item_wrapper:first").text().trim();
+                $rating = object.target.value;
+                if ($rating){
+                        $.post(
+                                'ratings/add.php',
+                                {
+                                        item: $item,
+                                        rating: $rating
+                                }
+                        );
+                } else {
+                        $.post(
+                                'ratings/remove.php',
+                                {
+                                        item: $item
+                                }
+                        );
+                }
+        });
 });
 </script>
 {% endblock %}

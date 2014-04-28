@@ -4,19 +4,18 @@
 
 {% block body %}
 
-<p>To get started, select a dining hall</p>
-
-<p>{{ user }}</p>
-
-<form method="POST" action='/facility.php'>
-<select name='facility'>
-
-{% for row in facilities %}
-<option value="{{ row[0] }}:{{ row[1] }}">{{ row[1] }}</option>
-{% endfor %}
-
-</select>
-<button type="submit" class="btn btn-default">GO</button>
-</form>
+<div class="centered-panel">
+  <div class="panel panel-custom">
+    <div class="panel-heading">Choose a dining hall</div>
+      <ul class="list-group">
+        {% for row in facilities %}
+        <li class="list-group-item">
+                <a href="/facility.php?facility={{row[0]}}:{{row[1]}}">{{row[1]}}</a>
+        </li>
+        {% endfor %}
+      </ul>
+  </div>
+</div>
+</div>
 
 {% endblock %}

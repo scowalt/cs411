@@ -53,7 +53,7 @@ if(isset($_POST['submit'])){
 	}
 
 	// query the database for exisitng notifications from the user
-	$notifications_query = "SELECT food_name,name FROM notifications NATURAL JOIN facilities WHERE user_net_id=\"$netid\" ORDER BY food_name ASC;";
+	$notifications_query = "SELECT food_name,name,facility_id FROM notifications NATURAL JOIN facilities WHERE user_net_id=\"$netid\" ORDER BY food_name ASC;";
 	$result = mysql_query($notifications_query) or die($notifications_query . "<br/>" . mysql_error());;
 	$notifications = array();
 	while(($row = mysql_fetch_row($result)) != null)

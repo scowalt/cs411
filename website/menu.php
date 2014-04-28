@@ -8,6 +8,10 @@ $twig = new Twig_Environment($loader);
 
 $menu_id = htmlspecialchars($_GET['menu_id']);
 
+if(!isset($menu_id) || $menu_id === "") {
+        header( 'Location: http://cs411backend.web.engr.illinois.edu' );
+}
+
 // connect to database
 $link = mysql_connect('engr-cpanel-mysql.engr.illinois.edu', 'cs411backend_web', 'teambackend');
 if (!$link) {
