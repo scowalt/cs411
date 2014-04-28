@@ -10,6 +10,7 @@ except ImportError :
     import simplejson as json # Python < 2.6
 import MySQLdb
 import datetime
+import threading
 
 nutTypes = ["Calories", "Total Fat", "Saturated Fat", "Polyunsaturated Fat", "Monounsaturated Fat", "Cholesterol", "Sodium", "Total Carbohydrate", "Dietary Fiber", "Vitamin A", "Vitamin C", "Calcium", "Iron", "Protein", "Sugars"]
 
@@ -148,7 +149,12 @@ class FoodInfoGrabber:
     def __vitamin(self, tag):
         return tag.name == 'td' and tag.has_attr('class') and 'cbo_nn_SecondaryNutrientLabel' in str(tag['class'])
    
-def commitMenuAndFoods(menu, db):
+def commitMenuAndFoods(menu, semaphore):
+    semaphore.acquire()
+    print "Thread Committing", menu['date_string'], menu['meal'], "at", menu['facility']
+
+    db = MySQLdb.connect(host="engr-cpanel-mysql.engr.illinois.edu", user="cs411backend_jsu", passwd="cs411pass", db="cs411backend_food")
+    fig = FoodInfoGrabber()
     for foodID, foodInfo in menu['food'].items():
         menu['food'][foodID]['nutrition'] = fig.getNutritionalInformation(menu['facility_id'], menu['id'], foodID)
     
@@ -180,13 +186,15 @@ def commitMenuAndFoods(menu, db):
 
         cur.execute("INSERT IGNORE INTO nutritional_information(food_name, calories, total_fat, saturated_fat, polyunsaturated_fat, monounsaturated_fat, cholesterol, sodium, total_carbohydrate, dietary_fiber, vitamin_a, vitamin_c, calcium, iron, protein, sugar) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", nutTup)
 
-    db.commit();
+    db.commit()
+    semaphore.release()
 
 if __name__ == "__main__":
     db = MySQLdb.connect(host="engr-cpanel-mysql.engr.illinois.edu", user="cs411backend_jsu", passwd="cs411pass", db="cs411backend_food")
     
     fig = FoodInfoGrabber()
-    
+    threads = []
+    semaphore = threading.Semaphore(15)
     for facility in facilities :
         menuIds = []
         for part in facility['parts']:
@@ -203,5 +211,10 @@ if __name__ == "__main__":
             if not found :
                 menus.append(menu)
         for item in menus :
-            print "Committing", item['date_string'], item['meal'], "at", item['facility']
-            commitMenuAndFoods(item, db)
+            t = threading.Thread(target=commitMenuAndFoods, args = (item, semaphore))
+            t.daemon = True
+            threads.append(t)
+            t.start()
+
+    for thread in threads:
+        t.join()
