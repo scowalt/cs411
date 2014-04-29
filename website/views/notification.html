@@ -7,7 +7,7 @@
 
 	<div class="container">
 	<form role="form" method="post" action="notification.php">
-		{{ user }}
+		<h2>{{ user }}</h2>
 		<div class="form-group">Notify me when 
 				<select name="facility">
 					{% for row in facilities %}
@@ -22,6 +22,7 @@
 				</select></div>
 		<input type="submit" value="Submit" name="submit"/>
 	</form>
+	<br>
 	<h2>Current Notifications:</h2>
 	<table class="table">
 		<thead>
