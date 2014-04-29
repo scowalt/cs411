@@ -4,17 +4,57 @@
 
 {% block body %}
 
-<p>TODO -- Stephen: run the recommendation algorithm and output recommended meals.
-        The below data is a random query.</p>
-
-<ul class="list-group">
+{% if items is empty %}
+<h2 style="text-align: center; margin-top: 40px;">Rate more food to receive recommendations!</h2>
+{% endif %}
 {% for row in items %}
-        <li class="list-group-item">
-        <span class="food_item_wrapper">
+<div class="centered-panel menu-block">
+  <div class="panel panel-custom">
+    <div class="panel-heading">Meal {{loop.index}}</div>
+      <ul class="list-group">
+        <li class="list-group-item food-item" data-id="{{row[0]}}" data-toggle="modal" data-target=".food-item-modal">
                 {{row[0]}}
-        </span>
         </li>
-{% endfor %}
-</ul>
+        <li class="list-group-item food-item" data-id="{{row[1]}}" data-toggle="modal" data-target=".food-item-modal">
+                {{row[1]}}
+        </li>
+        <li class="list-group-item food-item" data-id="{{row[2]}}" data-toggle="modal" data-target=".food-item-modal">
+                {{row[2]}}
+        </li>
+      </ul>
+  </div>
+</div>
+</div>
+
+{% endfor %} 
+
+
+<!-- nutrition info modal -->
+<div class="modal fade food-item-modal" tabindex="-1" role="dialog" aria-labelledby="nutritionModal" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" id="nutrition-modal">
+      ...
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+$(document).on("click", ".food-item", function () {
+     var selected_food_name = $(this).data('id');
+     $.post( "nutrition/load_nutrition.php", {food_name:selected_food_name} )
+        .done(function(result) {
+            var title = "<div class=\"nutrition-title\">" + selected_food_name + "</div>";
+            $( "#nutrition-modal" ).html(title + result);       
+            return false;
+        })
+        .fail(function() {
+            // HTTP error case ...
+            $('#nutrition-modal').html("<h2>An error occured</h2>");
+        });
+});
+</script>
+
 
 {% endblock %}
