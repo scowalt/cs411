@@ -7,7 +7,7 @@
 <ul class="list-group">
 {% for row in items %}
         <li class="list-group-item">
-        <span class="food_item_wrapper">
+        <span class="food_item_wrapper food-item" data-id="{{row[0]}}" data-toggle="modal" data-target=".food-item-modal">
                 {{row[0]}}
         </span>
         {% if user %}
@@ -18,6 +18,36 @@
         </li>
 {% endfor %}
 </ul>
+
+
+<!-- nutrition info modal -->
+<div class="modal fade food-item-modal" tabindex="-1" role="dialog" aria-labelledby="nutritionModal" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" id="nutrition-modal">
+      ...
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+$(document).on("click", ".food_item_wrapper", function () {
+     var selected_food_name = $(this).data('id');
+     $.post( "nutrition/load_nutrition.php", {food_name:selected_food_name} )
+        .done(function(result) {
+                var title = "<div class=\"nutrition-title\">" + selected_food_name + "</div>";
+            $( "#nutrition-modal" ).html(title + result);       
+            return false;
+        })
+        .fail(function() {
+            // HTTP error case ...
+            $('#nutrition-modal').html("<h2>An error occured</h2>");
+        });
+});
+</script>
+
+
 
 <script src="./views/bootstrap-rating-input.min.js"></script>
 <script>

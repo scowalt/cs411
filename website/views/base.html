@@ -2,41 +2,40 @@
 
 <head>
         <title>{% block title %}Dining Menu{% endblock %}</title>
+
         <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
         <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-
-	<link href="css/main.css" type="text/css" rel="stylesheet" />
-
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <link href="css/main.css" type="text/css" rel="stylesheet" />
 </head>
 
 
 <body>
-	<div class="top-section">
-		<div class="top-menu">
-			{% if is_logged_in %}
-				<a href="myrecommendations.php">My Recommendations</a>
-				|
-				<a href="myratings.php">My Ratings</a>
-				|
-				<a href="notification.php">My Notifications</a>
-				|
-				<a href="google_auth.php?logout">Log Out</a>
-			{% else %}
-				<a href="google_auth.php">Log In</a>
-			{% endif %}
-		</div>
+        <div class="top-section">
+                <div class="top-menu">
+                        {% if is_logged_in %}
+                                <a href="myrecommendations.php">My Recommendations</a>
+                                |
+                                <a href="myratings.php">My Ratings</a>
+                                |
+                                <a href="notification.php">My Notifications</a>
+                                |
+                                <a href="google_auth.php?logout">Log Out</a>
+                        {% else %}
+                                <a href="google_auth.php">Log In</a>
+                        {% endif %}
+                </div>
 
-		<div class="site-title">
-			<a href="/">U of I Dining Hall Menus</a>
-		</div>
-	</div>
+                <div class="site-title">
+                        <a href="/">U of I Dining Hall Menus</a>
+                </div>
+        </div>
 
-	<div class="main">
-		{% block body %}
+        <div class="main">
+                {% block body %}
 
-		{% endblock %}
-	</div>
+                {% endblock %}
+        </div>
 </body>
 
 </html>

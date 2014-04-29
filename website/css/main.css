@@ -73,12 +73,39 @@ body {
         text-align: center;
 }
 
+.menu-block {
+        margin: 40px auto;
+}
+
 .panel-custom {
         background-color: #1BB6BA;
         color: #ffffff;
 }
 
+.list-group-item {
+        color: #1BB6BA;
+}
+
 .list-group-item a {
         color: #1BB6BA;
         text-decoration: none;
+}
+
+.food-item {
+        cursor: pointer;
+}
+
+.nutrition-title {
+        padding: 15px 34px 0px 34px;
+        color: #1BB6BA;
+        font-size: 24px;
+}
+
+.modal-content table {
+        margin: 6px auto 30px auto;
+}
+
+.modal-content td {
+        border: 1px solid black;
+        padding: 10px;
 }
