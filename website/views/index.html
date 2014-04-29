@@ -4,13 +4,32 @@
 
 {% block body %}
 
+<style type="text/css">
+input[type=submit] {
+  background: transparent;
+  border: 0;
+  display: inline;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+form {
+  margin-bottom: 0em;
+}
+</style>
+
 <div class="centered-panel">
   <div class="panel panel-custom">
     <div class="panel-heading">Choose a dining hall</div>
       <ul class="list-group">
         {% for row in facilities %}
         <li class="list-group-item">
-                <a href="/facility.php?facility={{row[0]}}:{{row[1]}}">{{row[1]}}</a>
+          <form action="facility.php" method="post">
+            <input type="hidden" name="facility" value="{{row[0]}}:{{row[1]}}">
+            <input type="submit" value="{{row[1]}}">
+          </form>
         </li>
         {% endfor %}
       </ul>

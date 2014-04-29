@@ -6,7 +6,7 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
-$facility_info = $_GET['facility'];
+$facility_info = $_POST['facility'];
 $facility_arr = split(":", $facility_info);
 $facility_id = $facility_arr[0];
 $facility_name = $facility_arr[1];
@@ -23,6 +23,9 @@ if (!$link) {
 
 // query the database
 mysql_select_db('cs411backend_food', $link);
+
+$facility_name = mysql_real_escape_string($facility_name);
+
 $menu_query = "SELECT * FROM menus WHERE facility_id = $facility_id";
 $result = mysql_query($menu_query)  or die($menu_query. "<br/><br/>".mysql_error());;
 
