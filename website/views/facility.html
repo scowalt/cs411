@@ -4,29 +4,30 @@
 
 {% block body %}
 
-<style type="text/css">
-input[type=submit] {
-  background: transparent;
-  border: 0;
-  display: inline;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-  outline: none;
-}
 
-form {
-  margin-bottom: 0em;
-}
-</style>
+<h1 style="text-align: center;">{{facility_name}}</h1>
 
-<h1>{{facility_name}}</h1>
+{% set curr_date = 0 %}
 
 {% for row in menus %}
-<form action="menu.php" method="post">
-    <input type="hidden" name="menu_id" value="{{row[0]}}">
-    <input type="submit" value="{{row[1]}}  --  {{row[3]}}">
-</form><br>
+
+        {% if curr_date != row[1] %}
+                {% if curr_date != 0 %}
+                        </ul></div></div>
+                {% endif %}
+
+                <div class="centered-panel menu-block">
+                  <div class="panel panel-custom">
+                    <div class="panel-heading">{{row[1]}}</div>
+                      <ul class="list-group">
+                {% set curr_date = row[1] %}
+        {% endif %}
+
+
+        <li class="list-group-item food-item">
+                <a href="/menu.php?menu_id={{row[0]}}">{{row[3]}}</a>
+        </li>
+
 {% endfor %}
 
 {% endblock  %}
