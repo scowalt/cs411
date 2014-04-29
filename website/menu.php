@@ -6,7 +6,7 @@ require_once './vendor/autoload.php';
 $loader = new Twig_Loader_Filesystem('./views');
 $twig = new Twig_Environment($loader);
 
-$menu_id = htmlspecialchars($_GET['menu_id']);
+$menu_id = htmlspecialchars($_POST['menu_id']);
 
 if(!isset($menu_id) || $menu_id === "") {
         header( 'Location: http://cs411backend.web.engr.illinois.edu' );
@@ -20,6 +20,9 @@ if (!$link) {
 
 // query databaase
 mysql_select_db('cs411backend_food', $link);
+
+$menu_id = mysql_real_escape_string($menu_id);
+
 $menu_query = null;
 // if the user is logged in
 if (isset($_SESSION['user_email']) && $_SESSION['user_email']){
