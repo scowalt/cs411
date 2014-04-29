@@ -26,7 +26,11 @@ mysql_select_db('cs411backend_food', $link);
 
 $facility_name = mysql_real_escape_string($facility_name);
 
-$menu_query = "SELECT * FROM menus WHERE facility_id = $facility_id";
+$menu_query = "SELECT *
+                FROM menus
+                WHERE facility_id = $facility_id
+                AND date >= CURDATE()
+                ORDER BY date, meal_type";
 $result = mysql_query($menu_query)  or die($menu_query. "<br/><br/>".mysql_error());;
 
 $rows = array();
